@@ -1,5 +1,9 @@
 - name: Kubeadm Init
   block:
+
+    - name: containerd config
+      import_tasks: containerd_config.yaml
+
     - name: kubeadm init
       import_tasks: kubeadm_init.yaml
       vars:

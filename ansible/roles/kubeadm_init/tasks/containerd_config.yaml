@@ -1,0 +1,22 @@
+- name: containerd config.toml 생성
+  copy:
+    dest: /etc/containerd/config.toml
+    content: |
+      version = 2
+
+      [plugins]
+        [plugins."io.containerd.grpc.v1.cri"]
+          [plugins."io.containerd.grpc.v1.cri".containerd]
+            [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+              [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+                runtime_type = "io.containerd.runc.v2"
+                [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+                  SystemdCgroup = true
+            [plugins."io.containerd.grpc.v1.cri".registry]
+              config_path = "/etc/containerd/certs.d"
+
+- name: containerd 재시작
+  systemd:
+    name: containerd
+    state: restarted
+    enabled: yes

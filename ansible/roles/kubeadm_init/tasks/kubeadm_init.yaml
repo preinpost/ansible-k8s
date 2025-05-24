@@ -14,15 +14,15 @@
       networking:
         podSubnet: "192.168.0.0/16"
 
+      {% if nexus_docker_k8s_registry_endpoint is defined and nexus_docker_k8s_registry_endpoint %}
       dns:
-        {% if nexus_docker_k8s_registry_endpoint is defined and nexus_docker_k8s_registry_endpoint %}
         imageRepository: "{{ nexus_docker_k8s_registry_endpoint }}/coredns"
-        {% endif %}
+      {% endif %}
         
+      {% if nexus_docker_k8s_registry_endpoint is defined and nexus_docker_k8s_registry_endpoint %}  
       pause:
-        {% if nexus_docker_k8s_registry_endpoint is defined and nexus_docker_k8s_registry_endpoint %}
         imageRepository: "{{ nexus_docker_k8s_registry_endpoint }}/pause"
-        {% endif %}
+      {% endif %}
     
 - name: kubeadm init
   shell: kubeadm init --config=/tmp/kubeadm-config.yaml
