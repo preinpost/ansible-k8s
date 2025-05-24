@@ -11,6 +11,10 @@
       - gnupg-agent
       - software-properties-common
 
+- name: Get Ubuntu codename
+  command: lsb_release -cs
+  register: ubuntu_codename
+
 - name: Add an apt signing key for Docker
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
@@ -18,7 +22,7 @@
 
 - name: Add apt repository for stable version
   apt_repository:
-    repo: deb [arch=arm64] https://download.docker.com/linux/ubuntu xenial stable
+    repo: deb [arch=arm64] https://download.docker.com/linux/ubuntu {{ ubuntu_codename.stdout }} stable
     state: present
 
 - name: Install docker and its dependecies
@@ -118,8 +122,6 @@
   become: true
   shell: |
     apt-mark hold kubelet kubeadm kubectl
-  args:
-    warn: false
 
 - name: Ensure br_netfilter module is loaded
   modprobe:
@@ -127,7 +129,7 @@
     state: present
 
 - name: Set sysctl params for Kubernetes networking
-  sysctl:
+  sysctl: 
     name: net.bridge.bridge-nf-call-iptables
     value: '1'
     state: present

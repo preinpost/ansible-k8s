@@ -1,6 +1,5 @@
 - name: Kubeadm Init
   block:
-
     - name: containerd config
       import_tasks: containerd_config.yaml
 
@@ -9,4 +8,5 @@
       vars:
         k8s_install_version_semver: "v1.33.0"
     
-
+    - name: ubuntu_user_setup
+      import_tasks: ubuntu_user_setup.yaml
