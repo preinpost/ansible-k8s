@@ -1,0 +1,5 @@
+- name: k8s 마스터 노드 CNI 설치
+  block:
+    - name: cni install
+      import_tasks: cni_install.yaml
+

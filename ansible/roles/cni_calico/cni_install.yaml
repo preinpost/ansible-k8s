@@ -1,0 +1,10 @@
+- name: cni install
+  become: true
+  block:
+    - name: role_path 출력
+      debug:
+        msg: "role_path: {{ role_path }}"
+        
+    - name: Calico CNI 적용
+      command: >
+        kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f {{ role_path }}/calico-manifest-v3.33.0.yaml
