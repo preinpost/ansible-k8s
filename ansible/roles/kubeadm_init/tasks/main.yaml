@@ -2,4 +2,7 @@
   block:
     - name: kubeadm init
       import_tasks: kubeadm_init.yaml
+      vars:
+        k8s_install_version_semver: "v1.33.0"
+    
 
