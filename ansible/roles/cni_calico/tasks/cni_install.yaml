@@ -7,4 +7,5 @@
         
     - name: Calico CNI 적용
       command: >
-        kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f {{ role_path }}/calico-manifest-v3.33.0.yaml
+        kubectl --kubeconfig /etc/kubernetes/admin.conf apply -f {{ role_path }}/files/calico-manifest-v3.33.0.yaml
+        # /home/ubuntu/ansible-k8s/ansible/roles/cni_calico/calico-manifest-v3.33.0.yaml
