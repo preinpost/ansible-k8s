@@ -115,7 +115,7 @@
   register: kubernetes_install
 
 - name: Mark Kubernetes packages on hold
-  apt:
+  apt_mark:
     name:
       - kubelet
       - kubeadm
