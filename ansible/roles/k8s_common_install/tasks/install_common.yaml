@@ -115,12 +115,11 @@
   register: kubernetes_install
 
 - name: Mark Kubernetes packages on hold
-  apt_mark:
-    name:
-      - kubelet
-      - kubeadm
-      - kubectl
-    state: hold
+  become: true
+  shell: |
+    apt-mark hold kubelet kubeadm kubectl
+  args:
+    warn: false
 
 - name: Ensure br_netfilter module is loaded
   modprobe:
