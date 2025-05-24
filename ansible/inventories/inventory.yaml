@@ -1,0 +1,12 @@
+all:
+  children:
+    k8s_master:
+      hosts:
+        k8s_master_1:
+          ansible_host: '192.192.192.237'
+    k8s_worker:
+      hosts:
+        k8s_worker_1:
+          ansible_host: '192.192.192.58'
+        k8s_worker_2:
+          ansible_host: '192.192.192.8'
