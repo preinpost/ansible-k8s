@@ -1,0 +1,30 @@
+- name: kubeadm용 커스텀 config 파일 생성
+  copy:
+    dest: /tmp/kubeadm-config.yaml
+    content: |
+      apiVersion: kubeadm.k8s.io/v1beta3
+      kind: ClusterConfiguration
+
+      {% if nexus_docker_k8s_registry_endpoint is defined and nexus_docker_k8s_registry_endpoint %}
+      imageRepository: "{{ nexus_docker_k8s_registry_endpoint }}"
+      {% endif %}
+
+      kubernetesVersion: "{{ k8s_install_version_semver }}"
+      controlPlaneEndpoint: "{{ hostvars['k8s_master_1'].ansible_host }}"
+      networking:
+        podSubnet: "192.168.0.0/16"
+
+      dns:
+        {% if nexus_docker_k8s_registry_endpoint is defined and nexus_docker_k8s_registry_endpoint %}
+        imageRepository: "{{ nexus_docker_k8s_registry_endpoint }}/coredns"
+        {% endif %}
+        
+      pause:
+        {% if nexus_docker_k8s_registry_endpoint is defined and nexus_docker_k8s_registry_endpoint %}
+        imageRepository: "{{ nexus_docker_k8s_registry_endpoint }}/pause"
+        {% endif %}
+    
+- name: kubeadm init
+  shell: kubeadm init --config=/tmp/kubeadm-config.yaml
+  args:
+    creates: /etc/kubernetes/admin.conf
