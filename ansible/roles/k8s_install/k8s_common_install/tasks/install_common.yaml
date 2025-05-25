@@ -15,6 +15,17 @@
   command: lsb_release -cs
   register: ubuntu_codename
 
+- name: Set Docker arch fact
+  set_fact:
+    docker_arch: >-
+      {% if ansible_architecture == 'x86_64' %}
+        amd64
+      {% elif ansible_architecture == 'aarch64' %}
+        arm64
+      {% else %}
+        {{ ansible_architecture }}
+      {% endif %}
+
 - name: Add an apt signing key for Docker
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
@@ -22,7 +33,7 @@
 
 - name: Add apt repository for stable version
   apt_repository:
-    repo: deb [arch=arm64] https://download.docker.com/linux/ubuntu {{ ubuntu_codename.stdout }} stable
+    repo: deb [arch={{ docker_arch }}] https://download.docker.com/linux/ubuntu {{ ubuntu_codename.stdout }} stable
     state: present
 
 - name: Install docker and its dependecies

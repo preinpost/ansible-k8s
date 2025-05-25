@@ -1,5 +1,5 @@
-- name: k8s 마스터 노드 설치 
-  hosts: k8s_master
+- name: k8s 워커 노드 설치 
+  hosts: k8s_worker
   become: yes
   gather_facts: no
   roles:
