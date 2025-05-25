@@ -1,0 +1,2 @@
+elk_manifest_dir: /tmp/elk_ansible_manifests
+elk_namespace: elk

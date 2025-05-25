@@ -1,0 +1,4 @@
+resources:
+  - ./elasticsearch
+  - ./kibana
+  - ./metricbeat

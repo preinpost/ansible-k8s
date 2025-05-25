@@ -4,8 +4,6 @@
   roles:
     - k8s_application/strimzi_kafka
 
-
-
 - name: strimzi kafka manifest 적용
   hosts: k8s_master_1
   gather_facts: false

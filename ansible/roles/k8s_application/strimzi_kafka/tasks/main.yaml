@@ -1,6 +1,5 @@
 - name: kafka overlay kustomization.yaml 생성
   block:
-
     - name: 임시 디렉토리 생성
       file:
         path: "{{ strimzi_manifest_dir }}"
@@ -22,10 +21,6 @@
       command: |
         kubectl kustomize {{ strimzi_manifest_dir }}/0.46.0
       register: kustomize_output
-
-    # - name: 생성된 manifest 파일 확인
-    #   debug:
-    #     msg: "{{ kustomize_output.stdout }}"
 
     - name: 생성된 manifest 파일 저장
       copy:

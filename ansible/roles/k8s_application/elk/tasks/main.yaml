@@ -1,0 +1,50 @@
+- name: elk manifest 생성
+  block:
+    - name: 임시 디렉토리 생성
+      file:
+        path: "{{ elk_manifest_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: 정적 yaml 디렉토리 전체 복사
+      copy:
+        src: "."
+        dest: "{{ elk_manifest_dir }}/"
+        mode: '0644'
+
+    - name: Jinja2 템플릿 렌더링 (kustomization.yaml.j2)
+      when: nexus_ip is defined and nexus_ip != ""
+      block:
+        - name: Jinja2 템플릿 렌더링 (kustomization.yaml.j2)
+          template:
+            src: "0.46.0/kustomization.yaml.j2"
+            dest: "{{ elk_manifest_dir }}/kustomization.yaml"
+
+        - name: Jinja2 템플릿 렌더링 (patch-strimzi-env.yaml.j2)
+          template:
+            src: "0.46.0/patch-strimzi-env.yaml.j2"
+            dest: "{{ elk_manifest_dir }}/patch-strimzi-env.yaml"
+
+    - name: kustomize build로 manifest 생성
+      command: |
+        kubectl kustomize {{ elk_manifest_dir }}/7.7.0
+      register: kustomize_output
+
+    - name: 생성된 manifest 파일 저장
+      copy:
+        content: "{{ kustomize_output.stdout }}"
+        dest: "{{ elk_manifest_dir }}/manifest.yaml"
+        mode: '0644'
+
+- name: elk 네임스페이스 존재 여부 확인
+  command: kubectl --kubeconfig=/etc/kubernetes/admin.conf get namespace {{ elk_namespace }}
+  register: elk_ns_check
+  ignore_errors: true
+
+- name: elk 네임스페이스 생성
+  command: kubectl --kubeconfig=/etc/kubernetes/admin.conf create namespace {{ elk_namespace }}
+  when: elk_ns_check.rc != 0
+  
+- name: kubectl apply
+  command:
+    cmd: "kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f {{ elk_manifest_dir }}/manifest.yaml"

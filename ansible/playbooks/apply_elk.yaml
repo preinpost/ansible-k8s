@@ -1,0 +1,5 @@
+- name: strimzi kafka manifest 생성
+  hosts: k8s_master_1
+  become: yes
+  roles:
+    - k8s_application/elk
