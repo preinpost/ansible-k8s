@@ -3,7 +3,7 @@ all:
     k8s_master:
       hosts:
         k8s_master_1:
-          ansible_host: '10.0.3.46'
+          ansible_host: '10.0.3.49'
           ansible_user: 'ubuntu'
           ansible_ssh_pass: 'ubuntu'
           # ansible_connection: local

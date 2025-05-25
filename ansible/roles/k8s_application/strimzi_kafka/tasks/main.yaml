@@ -1,0 +1,34 @@
+- name: kafka overlay kustomization.yaml 생성
+  block:
+
+    - name: 임시 디렉토리 생성
+      file:
+        path: "{{ strimzi_manifest_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: 정적 yaml 디렉토리 전체 복사
+      copy:
+        src: "."
+        dest: "{{ strimzi_manifest_dir }}/"
+        mode: '0644'
+
+    - name: Jinja2 템플릿 렌더링 (kustomization.yaml.j2)
+      when: nexus_ip is defined and nexus_ip != ""
+      import_tasks:
+        file: change_image_url.yaml
+
+    - name: kustomize build로 manifest 생성
+      command: |
+        kubectl kustomize {{ strimzi_manifest_dir }}/0.46.0
+      register: kustomize_output
+
+    # - name: 생성된 manifest 파일 확인
+    #   debug:
+    #     msg: "{{ kustomize_output.stdout }}"
+
+    - name: 생성된 manifest 파일 저장
+      copy:
+        content: "{{ kustomize_output.stdout }}"
+        dest: "{{ strimzi_manifest_dir }}/kafka-manifest.yaml"
+        mode: '0644'

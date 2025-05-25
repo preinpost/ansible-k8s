@@ -1,0 +1,34 @@
+- name: kafka 네임스페이스 존재 여부 확인
+  command: kubectl get namespace {{ kafka_namespace }}
+  register: kafka_ns_check
+  ignore_errors: true
+
+- name: kafka 네임스페이스 생성
+  command: kubectl create namespace {{ kafka_namespace }}
+  when: kafka_ns_check.rc != 0
+  
+# - name: kafka-manifest.yaml 복사
+#   copy:
+#     src: "{{ strimzi_manifest_dir }}/kafka-manifest.yaml"
+#     dest: "{{ strimzi_manifest_dir }}/kafka-manifest.yaml"
+
+- block:
+    - name: kubectl apply 1차 실행 (에러 무시)
+      command:
+        cmd: "kubectl apply -f {{ strimzi_manifest_dir }}/kafka-manifest.yaml"
+  rescue:
+    - block:
+        - name: kubectl apply 2차 실행 (CRD 생성 후 재시도)
+          command:
+            cmd: "kubectl apply -f {{ strimzi_manifest_dir }}/kafka-manifest.yaml"
+      rescue:
+        - name: strimzi-cluster-operator 파드가 Running 될 때까지 대기
+          shell: |
+            kubectl get pod -n kafka -l name=strimzi-cluster-operator -o jsonpath='{.items[0].status.phase}'
+          register: operator_pod_status
+          until: operator_pod_status.stdout == 'Running'
+          retries: 30
+          delay: 10
+        - name: kubectl apply 3차 실행 (operator 파드 기동 후 최종 재시도)
+          command:
+            cmd: "kubectl apply -f {{ strimzi_manifest_dir }}/kafka-manifest.yaml"

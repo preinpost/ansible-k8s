@@ -1,0 +1,11 @@
+- name: 동적 템플릿 처리
+  block:
+    - name: Jinja2 템플릿 렌더링 (kustomization.yaml.j2)
+      template:
+        src: "0.46.0/kustomization.yaml.j2"
+        dest: "{{ strimzi_manifest_dir }}/kustomization.yaml"
+
+    - name: Jinja2 템플릿 렌더링 (patch-strimzi-env.yaml.j2)
+      template:
+        src: "0.46.0/patch-strimzi-env.yaml.j2"
+        dest: "{{ strimzi_manifest_dir }}/patch-strimzi-env.yaml"

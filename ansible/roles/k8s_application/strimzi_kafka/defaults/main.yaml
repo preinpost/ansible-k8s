@@ -1,0 +1,2 @@
+strimzi_manifest_dir: /tmp/ansible_strimzi_manifests
+kafka_namespace: kafka

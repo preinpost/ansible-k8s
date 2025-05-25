@@ -1,0 +1,29 @@
+resources:
+  - ./strimzi-cluster-operator-0.46.0.yaml
+
+namespace: kafka
+
+bases:
+  - ../base
+
+patches:
+  - path: ./strimzi-rolebinding-patch.yaml
+  - path: ./strimzi-entity-operator-patch.yaml
+  - path: ./strimzi-clusterrolebinding-patch.yaml
+  - path: ./strimzi-leader-election-patch.yaml
+  - path: ./strimzi-watched-patch.yaml
+  - path: ./strimzi-kafka-broker-delegation-patch.yaml
+  - path: ./strimzi-kafka-client-delegation-patch.yaml
+  - path: ./patch-strimzi-env.yaml
+
+images:
+  - name: quay.io/strimzi/operator
+    newName: quay.io/strimzi/strimzi/operator
+  - name: quay.io/strimzi/kafka
+    newName: quay.io/strimzi/strimzi/kafka
+  - name: quay.io/strimzi/kafka-bridge
+    newName: quay.io/strimzi/strimzi/kafka-bridge
+  - name: quay.io/strimzi/kaniko-executor
+    newName: quay.io/strimzi/strimzi/kaniko-executor
+  - name: quay.io/strimzi/maven-builder
+    newName: quay.io/strimzi/strimzi/maven-builder
