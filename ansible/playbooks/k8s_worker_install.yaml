@@ -6,3 +6,5 @@
     - k8s_install/k8s_common_install
     - k8s_install/kubeadm_init
     - k8s_install/cni_calico
+  vars:
+    kubernetes_version: "1.33"

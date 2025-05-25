@@ -26,15 +26,10 @@
         {{ ansible_architecture }}
       {% endif %}
 
-- name: Add an apt signing key for Docker
-  apt_key:
-    url: https://download.docker.com/linux/ubuntu/gpg
-    state: present
-
-- name: Add apt repository for stable version
-  apt_repository:
-    repo: deb [arch={{ docker_arch }}] https://download.docker.com/linux/ubuntu {{ ubuntu_codename.stdout }} stable
-    state: present
+- name: Add gpg key for Docker repository and Kubernetes apt repository From Online
+  when: use_nexus is not defined or use_nexus == false
+  import_tasks:
+    file: gpg_online_install.yaml
 
 - name: Install docker and its dependecies
   apt: 
@@ -91,19 +86,6 @@
     path: /etc/apt/keyrings
     state: directory
     mode: '0755'
-
-- name: Download Kubernetes apt keyring
-  shell: |
-    curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | \
-    gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-  args:
-    creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-  become: true
-
-- name: Add Kubernetes apt repository
-  apt_repository:
-    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /"
-    state: present
 
 - name: Install Kubernetes components
   apt:
