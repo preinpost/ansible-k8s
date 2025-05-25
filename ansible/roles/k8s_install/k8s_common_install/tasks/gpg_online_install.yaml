@@ -5,7 +5,7 @@
 
 - name: Add apt repository for stable version
   apt_repository:
-    repo: deb [arch={{ docker_arch }}] https://download.docker.com/linux/ubuntu {{ ubuntu_codename.stdout }} stable
+    repo: deb [arch={{ docker_arch | trim }}] https://download.docker.com/linux/ubuntu {{ ubuntu_codename.stdout }} stable
     state: present
 
 - name: Download Kubernetes apt keyring

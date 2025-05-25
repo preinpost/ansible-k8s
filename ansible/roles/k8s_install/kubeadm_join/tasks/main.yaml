@@ -1,0 +1,51 @@
+- name: 워커 노드 kubeadm join 전체 작업
+  block:
+    - name: 워커 노드 hostname 변경
+      hostname:
+        name: "{{ inventory_hostname | replace('_', '-') }}"
+      become: yes
+
+    - name: kubeadm join 명령어 생성
+      shell: kubeadm token create --print-join-command
+      register: join_cmd
+      delegate_to: k8s_master_1
+      run_once: true
+
+    - name: 워커에 join 명령어 파일 배포
+      copy:
+        content: "{{ join_cmd.stdout }}"
+        dest: /tmp/k8s_join_cmd.sh
+        mode: '0755'
+      become: yes
+
+    - block:
+        - name: 워커에서 join 명령어 실행 (1차)
+          become: yes
+          shell: bash /tmp/k8s_join_cmd.sh
+      rescue:
+        - name: join 실패 시 kubeadm reset 실행
+          become: yes
+          shell: kubeadm reset -f
+          ignore_errors: yes
+        - name: join 명령어 파일 재배포
+          become: yes
+          copy:
+            content: "{{ join_cmd.stdout }}"
+            dest: /tmp/k8s_join_cmd.sh
+            mode: '0755'
+        - name: 워커에서 join 명령어 실행 (2차)
+          become: yes
+          shell: bash /tmp/k8s_join_cmd.sh
+
+    - name: 마스터의 join 명령어 파일 삭제
+      file:
+        path: /tmp/k8s_join_cmd.sh
+        state: absent
+      delegate_to: k8s_master_1
+      run_once: true
+
+    - name: 워커의 join 명령어 파일 삭제
+      file:
+        path: /tmp/k8s_join_cmd.sh
+        state: absent
+      ignore_errors: yes

@@ -3,13 +3,17 @@ all:
     k8s_master:
       hosts:
         k8s_master_1:
-          ansible_host: '10.0.3.49'
+          ansible_host: '10.0.3.54'
           ansible_user: 'ubuntu'
           ansible_ssh_pass: 'ubuntu'
           # ansible_connection: local
     k8s_worker:
       hosts:
         k8s_worker_1:
-          ansible_host: '192.192.192.58'
+          ansible_host: '10.0.3.56'
+          ansible_user: 'ubuntu'
+          ansible_ssh_pass: 'ubuntu'
         k8s_worker_2:
-          ansible_host: '192.192.192.8'
+          ansible_host: '10.0.3.57'
+          ansible_user: 'ubuntu'
+          ansible_ssh_pass: 'ubuntu'

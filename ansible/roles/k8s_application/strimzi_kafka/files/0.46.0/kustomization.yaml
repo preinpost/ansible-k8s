@@ -18,12 +18,12 @@ patches:
 
 images:
   - name: quay.io/strimzi/operator
-    newName: quay.io/strimzi/strimzi/operator
+    newName: quay.io/strimzi/operator
   - name: quay.io/strimzi/kafka
-    newName: quay.io/strimzi/strimzi/kafka
+    newName: quay.io/strimzi/kafka
   - name: quay.io/strimzi/kafka-bridge
-    newName: quay.io/strimzi/strimzi/kafka-bridge
+    newName: quay.io/strimzi/kafka-bridge
   - name: quay.io/strimzi/kaniko-executor
-    newName: quay.io/strimzi/strimzi/kaniko-executor
+    newName: quay.io/strimzi/kaniko-executor
   - name: quay.io/strimzi/maven-builder
-    newName: quay.io/strimzi/strimzi/maven-builder
+    newName: quay.io/strimzi/maven-builder
