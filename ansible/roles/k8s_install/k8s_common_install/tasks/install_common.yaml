@@ -31,15 +31,18 @@
   import_tasks:
     file: gpg_online_install.yaml
 
-- name: Install docker and its dependecies
+- name: Add gpg key for Docker repository and Kubernetes apt repository From Offline
+  when: use_nexus is defined and use_nexus == true
+  import_tasks:
+    file: gpg_offline_install.yaml
+
+- name: Install containerd and its dependecies
   apt: 
     name: "{{ packages }}"
     state: present
     update_cache: yes
   vars:
     packages:
-      - docker-ce 
-      - docker-ce-cli 
       - containerd.io
   notify:
     - docker status
@@ -55,29 +58,9 @@
     replace: '#\1'
   become: true
 
-- name: Create /etc/docker directory
-  file:
-    path: /etc/docker
-    state: directory
-
-- name: Set up Docker daemon.json
-  copy:
-    dest: /etc/docker/daemon.json
-    content: |
-      {
-        "exec-opts": ["native.cgroupdriver=systemd"],
-        "log-driver": "json-file",
-        "log-opts": {
-          "max-size": "100m"
-        },
-        "storage-driver": "overlay2"
-      }
-  notify:
-    - restart docker
-
-- name: Enable and restart Docker
+- name: Enable and restart Containerd
   systemd:
-    name: docker
+    name: containerd
     enabled: yes
     state: restarted
 
